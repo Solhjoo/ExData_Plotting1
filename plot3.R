@@ -1,0 +1,16 @@
+library(dplyr)
+library(lubridate)
+library(ggplot2)
+download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip", destfile = "powerConsumption.zip", method = "curl")
+unzip("powerConsumption.zip")
+
+Consumption <- read.table("household_power_consumption.txt", header = T, sep = ";")
+Consumption$Date <- as.Date(Consumption$Date, format = "%d/%m/%Y")
+Consumption <- filter(Consumption, Date == as.POSIXlt("2007-02-01") | Date == as.POSIXlt("2007-02-02"))
+
+png(file = "plot3.png", width = 480, height = 480, units = "px")
+matplot(cbind(Consumption$Sub_metering_1, Consumption$Sub_metering_2, Consumption$Sub_metering_3), lty=1, type = c("l","l","l"), ylab = "Energy sub metering", xlab="",xaxt = "n", col=c(1,2,4))
+#axis(1, at=c(1,1440), labels=unique(strftime(Consumption$Date, "%a")))
+axis(1, at=c(1,1440,2880), labels=c("Thu","Fri","Sat"))
+legend("topright", c("Sub_metering_1", "Sub_metering_2","Sub_metering_3"), col=c(1,2,4), lty=1)
+dev.off()
